@@ -157,8 +157,8 @@ module.exports = {
         try {
           var xmlDoc = xmljs.parseXml(s);
           // console.log(xmlDoc.toString() );
-          var data = xmlDoc.find("a:response/a:propstat/a:prop/c:calendar-data", { a: 'DAV:', c: "urn:ietf:params:xml:ns:caldav" });
-          for (var i in data) {
+          var data = xmlDoc.find("d:response/d:propstat/d:prop/c:calendar-data",{ d: 'DAV:', c: "urn:ietf:params:xml:ns:caldav" });
+	  for (var i in data) {
             var ics = data[i].text();
             var evs = ics.match(/BEGIN:VEVENT[\s\S]*END:VEVENT/gi);
             for (var x in evs) {
