@@ -19,4 +19,4 @@ caldav.getEvents([caldav_calendarurl],[username],[password],[startDate],[endDate
 Fork
 -----------
 
-I have forked [this]() project because it wasn't parsing correctly my caldav XML. If you are having the same issue, feel free to use this node.js package and modify it.
+I have forked [this](https://github.com/jachwe/node-caldav/) project because it wasn't parsing correctly my caldav XML. If you are having the same issue, feel free to use this node.js package and modify it.
