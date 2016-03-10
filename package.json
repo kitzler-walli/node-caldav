@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jachwe/node-caldav.git"
+    "url": "https://github.com/rexromae/node-caldav"
   },
   "keywords": [
     "caldav",
@@ -19,10 +19,10 @@
   "dependencies": {
     "libxmljs": "0.10.0"
   },
-  "author": "Jewe Pasch",
+  "author": "Andrea Falzetti",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jachwe/node-caldav/issues"
+    "url": "https://github.com/rexromae/node-caldav/issues"
   },
-  "homepage": "https://github.com/jachwe/node-caldav"
+  "homepage": "https://github.com/rexromae/node-caldav"
 }
