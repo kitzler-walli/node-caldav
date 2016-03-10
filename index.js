@@ -163,8 +163,10 @@ module.exports = {
             var evs = ics.match(/BEGIN:VEVENT[\s\S]*END:VEVENT/gi);
             for (var x in evs) {
               var evobj = {};
-              var evstr = evs[x];
-              evstr = evstr.split("\n");
+  	      var evstr = evs[x];
+ 	      var regexFix = /[^\S\t]\n/gm;
+              evstr = evstr.replace(regexFix, "");
+  	      evstr = evstr.split("\n");
               for (var y in evstr) {
                 var evpropstr = evstr[y];
                 if (evpropstr.match(/BEGIN:|END:/gi)) {
