@@ -17,6 +17,7 @@
     "ics"
   ],
   "dependencies": {
+    "ical.js": "^1.1.2",
     "libxmljs": "0.10.0",
     "moment": "^2.12.0"
   },

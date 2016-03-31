@@ -3,6 +3,7 @@
 var https = require("https");
 var xmljs = require("libxmljs");
 var moment = require('moment');
+var ical = require('ical.js');
 
 module.exports = {
 
@@ -74,7 +75,7 @@ module.exports = {
     }
     
     if(moment(event.endDate).hour() === 0) {
-      _endDateBody = 'DTEND;VALUE=DATE:' + moment(event.endDate).format(format_singleEvent) + '\n';
+      _endDateBody = 'DTEND;VALUE=DATE:' + moment(event.endDate).add(1, 'days').format(format_singleEvent) + '\n';
     } else {
       _endDateBody = 'DTEND:' + moment(event.endDate).format(format_allDay) + 'Z\n';      
     }
@@ -253,7 +254,7 @@ module.exports = {
       '    </C:comp-filter>\n' +
       '  </C:filter>\n' +
       '</C:calendar-query>';
-console.log(xml);
+//console.log(xml);
     var options = {
       rejectUnauthorized: false,
       hostname          : host,
@@ -284,20 +285,44 @@ console.log(xml);
         var reslist = [];
         try {
           var xmlDoc = xmljs.parseXml(s);
-          // console.log(xmlDoc.toString() );
+//           console.log(xmlDoc.toString() );
+//console.log(xmlDoc.toString());
           var data = xmlDoc.find("d:response/d:propstat/d:prop/c:calendar-data",{ d: 'DAV:', c: "urn:ietf:params:xml:ns:caldav" });
-    for (var i in data) {
+          
+
+
+//        var jcalData = ical.parse(data);
+//        var vcalendar = new ical.Component(jcalData);
+//        var vevent = vcalendar.getFirstSubcomponent('vevent');          
+//          console.log(vevent);
+          
+      	  for (var i in data) {
             var ics = data[i].text();
             var evs = ics.match(/BEGIN:VEVENT[\s\S]*END:VEVENT/gi);
+
+//    console.log(ics);          
+//    console.log("***********\n\n");
+            var jcalData = ICAL.parse(ics);          
+            var vcalendar = new ical.Component(jcalData);
+            var vevent = vcalendar.getFirstSubcomponent('vevent');          
+//             var vevents = vcalendar.getAllSubcomponents('vevent');
+/*
+                        console.log("\n***********\n");
+            console.log(vevent);
+            console.log("\n***********\n");
+*/
+            
+            
+/*
             for (var x in evs) {
               var evobj = {};
-          var evstr = evs[x];
-        var regexFix = /[^\S\t]\n/gm;
+      	      var evstr = evs[x];
+       	      var regexFix = /[^\S\t]\n/gm;
               evstr = evstr.replace(regexFix, "");
-          evstr = evstr.split("\n");
+      	      evstr = evstr.split("\n");
               for (var y in evstr) {
                 var evpropstr = evstr[y];
-                if (evpropstr.match(/BEGIN:|END:/gi)) {
+                if (evpropstr.match(/^BEGIN:?|^END:?/gi)) {
                   continue;
                 }
                 var sp = evpropstr.split(":");
@@ -306,16 +331,18 @@ console.log(xml);
                 if (key && val) {
                   evobj[key] = val;
                 }
-
               }
-              reslist.push(evobj)
+              
+              reslist.push(vevent)
             }
-
+*/
+            reslist.push(vevent)
           }
           cb(reslist);
         }
         catch (e) {
-          console.log("Error parsing response")
+          console.log("Error parsing response");
+          console.log(e);
         }
 
       });
