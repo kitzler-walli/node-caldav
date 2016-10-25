@@ -1,5 +1,5 @@
 {
-  "name": "node-caldav",
+  "name": "node-caldav-mod",
   "version": "0.0.2",
   "description": "A lightweight node.js Caldav Client",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rexromae/node-caldav"
+    "url": "https://github.com/andreafalzetti/node-caldav"
   },
   "keywords": [
     "caldav",
@@ -18,13 +18,13 @@
   ],
   "dependencies": {
     "ical.js": "^1.1.2",
-    "libxmljs": "0.10.0",
+    "libxmljs": "^0.14.0",
     "moment": "^2.12.0"
   },
   "author": "Andrea Falzetti",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rexromae/node-caldav/issues"
+    "url": "https://github.com/andreafalzetti/node-caldav/issues"
   },
-  "homepage": "https://github.com/rexromae/node-caldav"
+  "homepage": "https://github.com/andreafalzetti/node-caldav"
 }
