@@ -188,7 +188,7 @@ module.exports = {
         try {
           
           parseString(s, (err, result) => {
-            console.log(result);
+            
             var data = result['D:multistatus']['D:response'];
 
             if(data) {
