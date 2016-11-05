@@ -1,6 +1,6 @@
 {
   "name": "node-caldav-mod",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A lightweight node.js Caldav Client",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "ical.js": "^1.1.2",
+    "loadenv": "^2.2.0",
     "moment": "^2.12.0",
     "xml2js": "^0.4.17"
   },
