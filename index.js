@@ -1,7 +1,6 @@
 "use strict";
 
 var https = require("https");
-// var xmljs = require("libxmljs");
 var parseString = require('xml2js').parseString;
 var moment = require('moment');
 var ical = require('ical.js');
@@ -60,15 +59,6 @@ module.exports = {
     var format_allDay = "YYYYMMDDTHHmms";
     var format_singleEvent = "YYYYMMDD";
 
-    /*var _startDate = moment(event.startDate).format("YYYYMMDDTHHmms") + "Z";
-    if(typeof event.endDate === "undefined" ||
-       event.endDate === "") {
-         _endDate = moment(event.startDate).add(1, "days").format("YYYYMMDDTHHmms") + "Z";
-    } else {
-         var _endDate = moment(event.endDate).format("YYYYMMDDTHHmms") + "Z";
-    }*/
-
-
     if(moment(event.startDate).hour() === 0) {
       _startDateBody = 'DTSTART;VALUE=DATE:' + moment(event.startDate).format(format_singleEvent) + '\n';
     } else {
@@ -86,7 +76,7 @@ module.exports = {
             _endDateBody +
             'END:VEVENT\n' +
             'END:VCALENDAR';
-    console.log(body);
+
     var options = {
       rejectUnauthorized: false,
       hostname          : host,
@@ -136,93 +126,6 @@ module.exports = {
   },
 
   /**
-   * Get a list of Folders/Calendars from a given url
-   *
-   * @param  {String} url
-   * @param  {String} user
-   * @param  {String} pass
-   * @param  {function} cb
-
-   */
-
-  getList: function (url, user, pass, cb) {
-
-    var urlparts = /(https?)\:\/\/(.*?):?(\d*)?(\/.*\/?)/gi.exec(url);
-    var protocol = urlparts[1];
-    var host = urlparts[2];
-    var port = urlparts[3] || (protocol === "https" ? 443 : 80);
-    var path = urlparts[4];
-
-    var xml = '<?xml version="1.0" encoding="utf-8" ?>\n' +
-      ' <D:propfind xmlns:D="DAV:" xmlns:C="http://calendarserver.org/ns/">\n' +
-      '     <D:prop>\n' +
-      '             <D:displayname />\n' +
-      '     </D:prop>\n' +
-      ' </D:propfind>';
-
-    var options = {
-      rejectUnauthorized: false,
-      hostname          : host,
-      port              : port,
-      path              : path,
-      method            : 'PROPFIND',
-      headers           : {
-        "Content-type"  : "text/xml",
-        "Content-Length": xml.length,
-        "User-Agent"    : "calDavClient",
-        "Connection"    : "close",
-        "Depth"         : "1"
-      }
-    };
-
-    if (user && pass) {
-      var userpass = new Buffer(user + ":" + pass).toString('base64');
-      options.headers["Authorization"] = "Basic " + userpass;
-    }
-
-
-    var req = https.request(options, function (res) {
-      var s = "";
-      res.on('data', function (chunk) {
-        s += chunk;
-      });
-
-      req.on('close', function () {
-        var reslist = [];
-        try {
-          parseString(s, function (err, result) {
-              var resp = result.find("a:response", { a: 'DAV:'});
-              for (var i in resp) {
-                var el = resp[i];
-                var href = el.get("a:href", { a: 'DAV:'});
-                var dspn = el.get("a:propstat/a:prop/a:displayname", { a: 'DAV:'});
-                if (dspn) {
-                  var resobj = {};
-                  resobj.displayName = dspn.text();
-                  resobj.href = href.text();
-                  reslist.push(resobj);
-                }
-              }
-          });
-        }
-        catch (e) {
-          console.log("Error parsing response")
-        }
-
-        cb(reslist);
-
-      });
-    });
-
-    req.end(xml);
-
-    req.on('error', function (e) {
-      console.log('problem with request: ' + e.message);
-    });
-
-  },
-
-  /**
    * Get a list of Events from a given Calendarurl
    *
    * @param  {String} url
@@ -255,7 +158,7 @@ module.exports = {
       '    </C:comp-filter>\n' +
       '  </C:filter>\n' +
       '</C:calendar-query>';
-//console.log(xml);
+
     var options = {
       rejectUnauthorized: false,
       hostname          : host,
@@ -276,68 +179,28 @@ module.exports = {
       options.headers["Authorization"] = "Basic " + userpass;
     }
 
-    var req = https.request(options, function (res) {
+    var req = https.request(options, (res) => {
       var s = "";
-      res.on('data', function (chunk) {
+      res.on('data', (chunk) => {
         s += chunk;
       });
 
-      req.on('close', function () {
+      req.on('close', () => {
         var reslist = [];
         try {
-          parseString(s, function (err, result) {
+          // console.log(s);
+          parseString(s, (err, result) => {
 
-            var data = result.find("d:response/d:propstat/d:prop/c:calendar-data",{ d: 'DAV:', c: "urn:ietf:params:xml:ns:caldav" });
+            var data = result['D:multistatus']['D:response'];
 
+            data.map((event) => {
 
-
-  //        var jcalData = ical.parse(data);
-  //        var vcalendar = new ical.Component(jcalData);
-  //        var vevent = vcalendar.getFirstSubcomponent('vevent');
-  //          console.log(vevent);
-            
-        	  for (var i in data) {
-              var ics = data[i].text();
-              var evs = ics.match(/BEGIN:VEVENT[\s\S]*END:VEVENT/gi);
-
-  //    console.log(ics);
-  //    console.log("***********\n\n");
+              var ics = event['D:propstat'][0]['D:prop'][0]['C:calendar-data'][0];
               var jcalData = ICAL.parse(ics);
               var vcalendar = new ical.Component(jcalData);
               var vevent = vcalendar.getFirstSubcomponent('vevent');
-  //             var vevents = vcalendar.getAllSubcomponents('vevent');
-  /*
-                          console.log("\n***********\n");
-              console.log(vevent);
-              console.log("\n***********\n");
-  */
-
-
-  /*
-              for (var x in evs) {
-                var evobj = {};
-        	      var evstr = evs[x];
-         	      var regexFix = /[^\S\t]\n/gm;
-                evstr = evstr.replace(regexFix, "");
-        	      evstr = evstr.split("\n");
-                for (var y in evstr) {
-                  var evpropstr = evstr[y];
-                  if (evpropstr.match(/^BEGIN:?|^END:?/gi)) {
-                    continue;
-                  }
-                  var sp = evpropstr.split(":");
-                  var key = sp[0];
-                  var val = sp[1];
-                  if (key && val) {
-                    evobj[key] = val;
-                  }
-                }
-
-                reslist.push(vevent)
-              }
-  */
               reslist.push(vevent)
-            }
+            });
             cb(reslist);
           });
         }
