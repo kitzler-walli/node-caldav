@@ -25,8 +25,6 @@ module.exports = {
     var port = urlparts[3] || (protocol === "https" ? 443 : 80);
     var path = urlparts[4] + event.key;
 
-
-
     /*
 
       BEGIN:VCALENDAR
@@ -102,7 +100,7 @@ module.exports = {
         <C:valid-calendar-data/>
       </D:error>
     */
-    console.log(options);
+    
     var req = https.request(options, function (res) {
       var s = "";
       res.on('data', function (chunk) {
@@ -188,19 +186,21 @@ module.exports = {
       req.on('close', () => {
         var reslist = [];
         try {
-          // console.log(s);
+          
           parseString(s, (err, result) => {
 
             var data = result['D:multistatus']['D:response'];
 
-            data.map((event) => {
-
-              var ics = event['D:propstat'][0]['D:prop'][0]['C:calendar-data'][0];
-              var jcalData = ICAL.parse(ics);
-              var vcalendar = new ical.Component(jcalData);
-              var vevent = vcalendar.getFirstSubcomponent('vevent');
-              reslist.push(vevent)
-            });
+            if(data) {
+              data.map((event) => {
+                var ics = event['D:propstat'][0]['D:prop'][0]['C:calendar-data'][0];
+                var jcalData = ICAL.parse(ics);
+                var vcalendar = new ical.Component(jcalData);
+                var vevent = vcalendar.getFirstSubcomponent('vevent');
+                reslist.push(vevent)
+              });
+            }
+            
             cb(reslist);
           });
         }
