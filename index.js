@@ -100,7 +100,7 @@ module.exports = {
         <C:valid-calendar-data/>
       </D:error>
     */
-    
+
     var req = https.request(options, function (res) {
       var s = "";
       res.on('data', function (chunk) {
@@ -186,9 +186,11 @@ module.exports = {
       req.on('close', () => {
         var reslist = [];
         try {
-          
+
+          console.log(s);
           parseString(s, (err, result) => {
-            
+            console.log("Parsing.....");
+            console.log(result);
             var data = result['D:multistatus']['D:response'];
 
             if(data) {
@@ -200,7 +202,7 @@ module.exports = {
                 reslist.push(vevent)
               });
             }
-            
+
             cb(reslist);
           });
         }
