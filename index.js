@@ -100,26 +100,22 @@ var updateEvent = function (event, url, user, pass, method, cb) {
       </D:error>
     */
 
+    var err;
     var req = https.request(options, function (res) {
-      var s = "";
-      res.on('data', function (chunk) {
-        s += chunk;
-      });
-
-      req.on('close', function () {
-        if(s === "") {
-          cb(true);
-        } else {
-          cb(false);
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+            err = new Error('response error: ' + res.statusCode);
         }
-      });
     });
-
-    req.end(body);
 
     req.on('error', function (e) {
-      console.log('problem with request: ' + e.message);
+        err = e;
     });
+
+    req.on('close', function () {
+        return cb(err);
+    });
+
+    return req.end(body);
 };
 
 module.exports = {
