@@ -5,7 +5,6 @@ var parseString = require('xml2js').parseString;
 var moment = require('moment');
 var ical = require('ical.js');
 
-module.exports = {
 
   /**
    * Add an event to a given calendar
@@ -17,7 +16,7 @@ module.exports = {
    * @param  {function} cb
 
    */
-  addEvent: function (event, url, user, pass, cb) {
+var updateEvent = function (event, url, user, pass, method, cb) {
 
     var urlparts = /(https?)\:\/\/(.*?):?(\d*)?(\/.*\/?)/gi.exec(url);
     var protocol = urlparts[1];
@@ -80,7 +79,7 @@ module.exports = {
       hostname          : host,
       port              : port,
       path              : path,
-      method            : 'PUT',
+      method            : method,
       headers           : {
         "Content-type"  : "text/calendar",
         "Content-Length": body.length,
@@ -121,7 +120,16 @@ module.exports = {
     req.on('error', function (e) {
       console.log('problem with request: ' + e.message);
     });
-  },
+};
+
+module.exports = {
+    addEvent: function (event, url, user, pass, cb) {
+        return updateEvent(event, url, user, pass, 'PUT', cb);
+    },
+
+    removeEvent: function (event, url, user, pass, cb) {
+        return updateEvent(event, url, user, pass, 'DELETE', cb);
+    },
 
   /**
    * Get a list of Events from a given Calendarurl
