@@ -50,4 +50,4 @@ caldav.getEvents(url, username, password, startDate, endDate, callback)
 Fork
 -----------
 
-I have forked [this](https://github.com/jachwe/node-caldav/) project because it wasn't parsing correctly my caldav XML. If you are having the same issue, feel free to use this node.js package and modify it.
+I have forked [this](https://github.com/andreafalzetti/node-caldav-mod/) project because the error handling was really bad and I needed a method for deleting events.
