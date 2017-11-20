@@ -48,24 +48,26 @@ const updateEvent = function (event, url, user, pass, method, cb) {
     let body = `${'BEGIN:VCALENDAR\n' +
                'BEGIN:VEVENT\n' +
                'UID:'}${event.key}\n` +
+               'LOCATION:'}${event.location}\n` +
+               'DESCRIPTION:'}${event.description}\n` +
                `SUMMARY:${event.summary}\n`;
 
     let _startDateBody;
     let _endDateBody;
 
-    const formatAllDay = 'YYYYMMDDTHHmms';
+    const formatAllDay = 'YYYYMMDDTHHmmss';
     const formatSingleEvent = 'YYYYMMDD';
 
     if (moment(event.startDate).hour() === 0) {
         _startDateBody = `DTSTART;VALUE=DATE:${moment(event.startDate).format(formatSingleEvent)}\n`;
     } else {
-        _startDateBody = `DTSTART:${moment(event.startDate).format(formatAllDay)}Z\n`;
+        _startDateBody = `DTSTART;TZID=Europe/Berlin:${moment(event.startDate).format(formatAllDay)}\n`;
     }
 
     if (moment(event.endDate).hour() === 0) {
         _endDateBody = `DTEND;VALUE=DATE:${moment(event.endDate).add(1, 'days').format(formatSingleEvent)}\n`;
     } else {
-        _endDateBody = `DTEND:${moment(event.endDate).format(formatAllDay)}Z\n`;
+        _endDateBody = `DTEND;TZID=Europe/Berlin:${moment(event.endDate).format(formatAllDay)}\n`;
     }
 
 
@@ -200,11 +202,11 @@ module.exports = {
             const reslist = [];
             try {
                 return parseString(s, (err, result) => {
-                    const data = result['D:multistatus']['D:response'];
+                    const data = result['d:multistatus']['d:response'];
 
                     if (data) {
                         data.forEach((event) => {
-                            const ics = event['D:propstat'][0]['D:prop'][0]['C:calendar-data'][0]._;
+                            const ics = event['d:propstat'][0]['d:prop'][0]['cal:calendar-data'][0]._;
                             const jcalData = ical.parse(ics);
                             const vcalendar = new ical.Component(jcalData);
                             const vevent = vcalendar.getFirstSubcomponent('vevent');
