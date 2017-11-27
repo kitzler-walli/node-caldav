@@ -210,7 +210,8 @@ module.exports = {
                             const jcalData = ical.parse(ics);
                             const vcalendar = new ical.Component(jcalData);
                             const vevent = vcalendar.getFirstSubcomponent('vevent');
-                            reslist.push(vevent);
+                            var event = new ICAL.Event(vevent);
+                            reslist.push(event);
                         });
                     }
 
