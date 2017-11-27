@@ -206,7 +206,7 @@ module.exports = {
 
                     if (data) {
                         data.forEach((event) => {
-                            const ics = event['d:propstat'][0]['d:prop'][0]['cal:calendar-data'][0]._;
+                            const ics = event['d:propstat'][0]['d:prop'][0]['cal:calendar-data'][0];
                             const jcalData = ical.parse(ics);
                             const vcalendar = new ical.Component(jcalData);
                             const vevent = vcalendar.getFirstSubcomponent('vevent');
