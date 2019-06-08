@@ -48,8 +48,8 @@ const updateEvent = function (event, url, user, pass, method, cb) {
    let body = `${'BEGIN:VCALENDAR\n' +
                'BEGIN:VEVENT\n' +
                'UID:'}${event.key}\n` +
-               `LOCATION:${event.location}\n` +
-               `DESCRIPTION:${event.description}\n` +
+               `LOCATION:${event.location ? event.location : ''}\n` +
+               `DESCRIPTION:${event.description ? event.location : ''}\n` +
                `SUMMARY:${event.summary}\n`;
 
     let _startDateBody;

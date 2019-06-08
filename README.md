@@ -18,6 +18,8 @@ The event object needs to look like this:
 const event = {
   key: "", // ID of the event, needs to be unique and can be used to edit the event in the future
   summary: "", // The title of the event
+  location: "" // Location of the event, optional.
+  description: "" // Description of the event, optional.
   startDate: "", // Any timeformat handled by moment.js
   endDate: "", // Any timeformat handled by moment.js
   tzid: "" // time zone in the format of "Europe/London"
