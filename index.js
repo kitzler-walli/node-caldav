@@ -135,12 +135,16 @@ module.exports = {
    * @param  {String} url
    * @param  {String} user
    * @param  {String} pass
-   * @param  {String} date from which to start like 20140101T120000Z
-   * @param  {String} date from which to stop like 20140102T120000Z, optional (can be undefined)
+   * @param  {String} Any timeformat handled by moment.js
+   * @param  {String} Any timeformat handled by moment.js, optional (can be null).
    * @param  {function} cb
 
    */
     getEvents: function (url, user, pass, start, end, cb) {
+
+        start = moment(start).utc().format('YYYYMMDD[T]HHmmss[Z]');
+        end   = (end) ? moment(end).utc().format('YYYYMMDD[T]HHmmss[Z]') : null;
+
         const urlparts = /(https?)\:\/\/(.*?):?(\d*)?(\/.*\/?)/gi.exec(url);
         const protocol = urlparts[1];
         const host = urlparts[2];

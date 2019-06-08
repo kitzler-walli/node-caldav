@@ -31,7 +31,7 @@ const event = {
  * @param {string} username - CalDAV Username
  * @param {string} password - CalDAV password
  * @param {string} startDate - Date from which to start, Any timeformat handled by moment.js
- * @param {string} endDate -  Date from which to stop, Any timeformat handled by moment.js
+ * @param {string} endDate -  Date from which to stop, Any timeformat handled by moment.js optional (can be null).
  * @param {function} callback - Callback function
  * @function
  */
