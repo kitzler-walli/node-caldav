@@ -20,6 +20,7 @@ const event = {
   summary: "", // The title of the event
   startDate: "", // Any timeformat handled by moment.js
   endDate: "", // Any timeformat handled by moment.js
+  tzid: "" // time zone in the format of "Europe/London"
 }
 ```
 ### Get Events
