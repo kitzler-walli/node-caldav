@@ -49,7 +49,7 @@ const updateEvent = function (event, url, user, pass, method, cb) {
                'BEGIN:VEVENT\n' +
                'UID:'}${event.key}\n` +
                `LOCATION:${event.location ? event.location : ''}\n` +
-               `DESCRIPTION:${event.description ? event.location : ''}\n` +
+               `DESCRIPTION:${event.description ? event.description : ''}\n` +
                `SUMMARY:${event.summary}\n`;
 
     let _startDateBody;
