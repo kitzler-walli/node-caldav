@@ -58,13 +58,13 @@ const updateEvent = function (event, url, user, pass, method, cb) {
     const formatAllDay = 'YYYYMMDDTHHmmss';
     const formatSingleEvent = 'YYYYMMDD';
 
-    if (moment(event.startDate).hour() === 0) {
+    if (event.allDayEvent) {
         _startDateBody = `DTSTART;VALUE=DATE:${moment(event.startDate).format(formatSingleEvent)}\n`;
     } else {
         _startDateBody = `DTSTART;TZID=${event.tzid}:${moment(event.startDate).format(formatAllDay)}\n`;
     }
 
-    if (moment(event.endDate).hour() === 0) {
+    if (event.allDayEvent) {
         _endDateBody = `DTEND;VALUE=DATE:${moment(event.endDate).add(1, 'days').format(formatSingleEvent)}\n`;
     } else {
         _endDateBody = `DTEND;TZID=${event.tzid}:${moment(event.endDate).format(formatAllDay)}\n`;

@@ -23,6 +23,7 @@ const event = {
   startDate: "", // Any timeformat handled by moment.js
   endDate: "", // Any timeformat handled by moment.js
   tzid: "" // time zone in the format of "Europe/London"
+  allDayEvent: "false" // specify allDayEvent (no time just date) / note no timezone for allDayEvents
 }
 ```
 ### Get Events
