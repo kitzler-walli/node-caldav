@@ -35,6 +35,7 @@ const event = {
  * @param {string} password - CalDAV password
  * @param {string} startDate - Date from which to start, Any timeformat handled by moment.js
  * @param {string} endDate -  Date from which to stop, Any timeformat handled by moment.js optional (can be null).
+ * @param {boolean} raw return all details in raw ICAL.Event structore, otherwise parse to event object
  * @param {function} callback - Callback function
  * @function
  */
