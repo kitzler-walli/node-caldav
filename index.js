@@ -96,8 +96,8 @@ const updateEvent = function (event, url, user, pass, method, cb) {
         const userpass = Buffer.from(`${user}:${pass}`).toString('base64');
         options.headers.Authorization = `Basic ${userpass}`;
     }
-    console.log(body);
-    console.log(options);
+    // console.log(body);
+    // console.log(options);
 
     /* ERROR example
       <D:error xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
