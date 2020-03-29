@@ -21,7 +21,7 @@ const updateEvent = function (event, url, user, pass, method, cb) {
     const protocol = urlparts[1];
     const host = urlparts[2];
     const port = urlparts[3] || (protocol === 'https' ? 443 : 80);
-    const path = urlparts[4] + event.key;
+    const path =  event.href || urlparts[4] + event.key.toUpperCase() + '.ics';
 
     /*
 
@@ -62,13 +62,13 @@ const updateEvent = function (event, url, user, pass, method, cb) {
         _startDateBody = `DTSTART;TZID=${event.tzid}:${moment(event.startDate).format(formatAllDay)}\n`;
         
     } else {
-        _startDateBody = `DTSTART;VALUE=DATE:${moment(event.startDate).format(formatSingleEvent)}\n`;
+        _startDateBody = `DTSTART;TZID=${event.tzid}:${moment(event.startDate).format(formatSingleEvent)}\n`;
     }
 
     if (event.allDayEvent) {
-        _endDateBody = `DTEND;TZID=${event.tzid}:${moment(event.endDate).format(formatAllDay)}\n`;
+        _endDateBody = `DTEND;TZID=${event.tzid}:${moment(event.endDate).add(1, 'days').format(formatAllDay)}\n`;
     } else {
-        _endDateBody = `DTEND;VALUE=DATE:${moment(event.endDate).add(1, 'days').format(formatSingleEvent)}\n`;
+        _endDateBody = `DTEND;TZID=${event.tzid}:${moment(event.endDate).format(formatSingleEvent)}\n`;
     }
 
 
@@ -84,7 +84,7 @@ const updateEvent = function (event, url, user, pass, method, cb) {
         path,
         method,
         headers: {
-            'Content-type': 'text/calendar',
+            'Content-type': 'text/calendar; charset=utf-8',
             'Content-Length': body.length,
             'User-Agent': 'calDavClient',
             Connection: 'close',
@@ -96,6 +96,8 @@ const updateEvent = function (event, url, user, pass, method, cb) {
         const userpass = Buffer.from(`${user}:${pass}`).toString('base64');
         options.headers.Authorization = `Basic ${userpass}`;
     }
+    console.log(body);
+    console.log(options);
 
     /* ERROR example
       <D:error xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
@@ -212,6 +214,7 @@ module.exports = {
 
                     if (data) {
                         data.forEach((event) => {
+                            const href = event['d:href'];
                             const ics = event['d:propstat'][0]['d:prop'][0]['cal:calendar-data'][0];
                             const jcalData = ical.parse(ics);
                             const vcalendar = new ical.Component(jcalData);
@@ -222,6 +225,7 @@ module.exports = {
                             }
                             else {
                                 reslist.push({
+                                    href: href,
                                     key: event.uid,
                                     summary: event.summary,
                                     location: event.location,
