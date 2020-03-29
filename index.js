@@ -6,16 +6,16 @@ const moment = require('moment');
 const ical = require('ical.js');
 
 
-  /**
-   * Add an event to a given calendar
-   *
-   * @param  {Object} event
-   * @param  {String} url
-   * @param  {String} user
-   * @param  {String} pass
-   * @param  {function} cb
+/**
+ * Add an event to a given calendar
+ *
+ * @param  {Object} event
+ * @param  {String} url
+ * @param  {String} user
+ * @param  {String} pass
+ * @param  {function} cb
 
-   */
+ */
 const updateEvent = function (event, url, user, pass, method, cb) {
     const urlparts = /(https?)\:\/\/(.*?):?(\d*)?(\/.*\/?)/gi.exec(url);
     const protocol = urlparts[1];
@@ -45,36 +45,37 @@ const updateEvent = function (event, url, user, pass, method, cb) {
 
     */
 
-   let body = `${'BEGIN:VCALENDAR\n' +
-               'BEGIN:VEVENT\n' +
-               'UID:'}${event.key}\n` +
-               `LOCATION:${event.location ? event.location : ''}\n` +
-               `DESCRIPTION:${event.description ? event.description : ''}\n` +
-               `SUMMARY:${event.summary}\n`;
+    let body = `${'BEGIN:VCALENDAR\n' +
+        'BEGIN:VEVENT\n' +
+        'UID:'}${event.key}\n` +
+        `LOCATION:${event.location ? event.location : ''}\n` +
+        `DESCRIPTION:${event.description ? event.description : ''}\n` +
+        `SUMMARY:${event.summary}\n`;
 
     let _startDateBody;
     let _endDateBody;
 
-    const formatAllDay = 'YYYYMMDDTHHmmss';
-    const formatSingleEvent = 'YYYYMMDD';
+    const formatSingleEvent = 'YYYYMMDDTHHmmss';
+    const formatAllDay = 'YYYYMMDD';
 
     if (event.allDayEvent) {
-        _startDateBody = `DTSTART;VALUE=DATE:${moment(event.startDate).format(formatSingleEvent)}\n`;
-    } else {
         _startDateBody = `DTSTART;TZID=${event.tzid}:${moment(event.startDate).format(formatAllDay)}\n`;
+        
+    } else {
+        _startDateBody = `DTSTART;VALUE=DATE:${moment(event.startDate).format(formatSingleEvent)}\n`;
     }
 
     if (event.allDayEvent) {
-        _endDateBody = `DTEND;VALUE=DATE:${moment(event.endDate).add(1, 'days').format(formatSingleEvent)}\n`;
-    } else {
         _endDateBody = `DTEND;TZID=${event.tzid}:${moment(event.endDate).format(formatAllDay)}\n`;
+    } else {
+        _endDateBody = `DTEND;VALUE=DATE:${moment(event.endDate).add(1, 'days').format(formatSingleEvent)}\n`;
     }
 
 
     body += `${_startDateBody +
-            _endDateBody
-            }END:VEVENT\n` +
-            'END:VCALENDAR';
+        _endDateBody
+        }END:VEVENT\n` +
+        'END:VCALENDAR';
 
     const options = {
         rejectUnauthorized: false,
@@ -129,21 +130,22 @@ module.exports = {
         return updateEvent(event, url, user, pass, 'DELETE', cb);
     },
 
-  /**
-   * Get a list of Events from a given Calendarurl
-   *
-   * @param  {String} url
-   * @param  {String} user
-   * @param  {String} pass
-   * @param  {String} Any timeformat handled by moment.js
-   * @param  {String} Any timeformat handled by moment.js, optional (can be null).
-   * @param  {function} cb
-
-   */
-    getEvents: function (url, user, pass, start, end, cb) {
+    /**
+     * Get a list of Events from a given Calendarurl
+     *
+     * @param  {String} url
+     * @param  {String} user
+     * @param  {String} pass
+     * @param  {String} Any timeformat handled by moment.js
+     * @param  {String} Any timeformat handled by moment.js, optional (can be null).
+     * @param  {Boolean} raw return all details in raw ICAL.Event structore, otherwise parse to event object
+     * @param  {function} cb
+  
+     */
+    getEvents: function (url, user, pass, start, end, raw, cb) {
 
         start = moment(start).utc().format('YYYYMMDD[T]HHmmss[Z]');
-        end   = (end) ? moment(end).utc().format('YYYYMMDD[T]HHmmss[Z]') : null;
+        end = (end) ? moment(end).utc().format('YYYYMMDD[T]HHmmss[Z]') : null;
 
         const urlparts = /(https?)\:\/\/(.*?):?(\d*)?(\/.*\/?)/gi.exec(url);
         const protocol = urlparts[1];
@@ -153,18 +155,18 @@ module.exports = {
         const endTimeRange = (end) ? ` end="${end}"` : '';
 
         const xml = `${'<?xml version="1.0" encoding="utf-8" ?>\n' +
-      '<C:calendar-query xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">\n' +
-      '  <D:prop>\n' +
-      '    <C:calendar-data/>\n' +
-      '  </D:prop>\n' +
-      '  <C:filter>\n' +
-      '    <C:comp-filter name="VCALENDAR">\n' +
-      '      <C:comp-filter name="VEVENT">\n' +
-      '        <C:time-range start="'}${start}"${endTimeRange}/>\n` +
-      '      </C:comp-filter>\n' +
-      '    </C:comp-filter>\n' +
-      '  </C:filter>\n' +
-      '</C:calendar-query>';
+            '<C:calendar-query xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">\n' +
+            '  <D:prop>\n' +
+            '    <C:calendar-data/>\n' +
+            '  </D:prop>\n' +
+            '  <C:filter>\n' +
+            '    <C:comp-filter name="VCALENDAR">\n' +
+            '      <C:comp-filter name="VEVENT">\n' +
+            '        <C:time-range start="'}${start}"${endTimeRange}/>\n` +
+            '      </C:comp-filter>\n' +
+            '    </C:comp-filter>\n' +
+            '  </C:filter>\n' +
+            '</C:calendar-query>';
 
         const options = {
             rejectUnauthorized: false,
@@ -215,7 +217,21 @@ module.exports = {
                             const vcalendar = new ical.Component(jcalData);
                             const vevent = vcalendar.getFirstSubcomponent('vevent');
                             var event = new ICAL.Event(vevent);
-                            reslist.push(event);
+                            if (raw) {
+                                reslist.push(event);
+                            }
+                            else {
+                                reslist.push({
+                                    key: event.uid,
+                                    summary: event.summary,
+                                    location: event.location,
+                                    description: event.description,
+                                    startDate: event.startDate.toICALString(),
+                                    endDate: event.endDate.toICALString(),
+                                    tzid: event.startDate.zone.tzid,
+                                    allDayEvent: event.startDate.icaltype == 'date'
+                                });
+                            }
                         });
                     }
 
